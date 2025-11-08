@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Verificación Ley 21.634</title>
+    <style>
+        @media print {
+            .no-print { display: none; }
+            body { margin: 0; }
+            .page-break { page-break-after: always; }
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .page {
+            background: white;
+            max-width: 210mm;
+            margin: 0 auto 20px;
+            padding: 25mm;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            min-height: 297mm;
+        }
+        
+        .header {
+            border-bottom: 4px solid #4f46e5;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .company-name {
+            font-size: 22px;
+            font-weight: bold;
+            color: #4f46e5;
+        }
+        
+        .doc-info {
+            text-align: right;
+            font-size: 11px;
+            color: #666;
+        }
+        
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4f46e5;
+            margin: 20px 0 15px;
+            text-transform: uppercase;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #4f46e5;
+            margin: 20px 0 10px;
+            border-left: 4px solid #4f46e5;
+            padding-left: 10px;
+        }
+        
+        .subsection-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #4338ca;
+            margin: 15px 0 8px;
+        }
+        
+        .content {
+            text-align: justify;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+        
+        .bullet-list {
+            margin: 10px 0 10px 25px;
+            font-size: 13px;
+        }
+        
+        .bullet-list li {
+            margin-bottom: 8px;
+        }
+        
+        .highlight-box {
+            background: #eef2ff;
+            border-left: 4px solid #4f46e5;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 13px;
+        }
+        
+        .warning-box {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+        
+        .critical-box {
+            background: #fee2e2;
+            border: 2px solid #dc2626;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 12px;
+        }
+        
+        .table th {
+            background: #4f46e5;
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+        
+        .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        
+        .table tr:nth-child(even) { background: #f9fafb; }
+        
+        .flowchart {
+            background: #f9fafb;
+            border: 2px solid #4f46e5;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 12px;
+        }
+        
+        .flow-step {
+            background: white;
+            border: 1px solid #4f46e5;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 5px;
+            position: relative;
+        }
+        
+        .flow-arrow {
+            text-align: center;
+            color: #4f46e5;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        
+        .matrix {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 11px;
+        }
+        
+        .matrix th {
+            background: #4f46e5;
+            color: white;
+            padding: 8px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .matrix td {
+            border: 1px solid #ddd;
+            padding: 6px;
+            text-align: center;
+        }
+        
+        .risk-low { background: #d1fae5; color: #065f46; font-weight: bold; }
+        .risk-medium { background: #fef3c7; color: #92400e; font-weight: bold; }
+        .risk-high { background: #fee2e2; color: #991b1b; font-weight: bold; }
+        
+        .footer {
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+            font-size: 10px;
+            color: #666;
+            text-align: center;
+        }
+        
+        .print-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        
+        .print-button:hover { background: #4338ca; }
+        .editable { background: #fef3c7; padding: 2px 4px; border-radius: 2px; font-style: italic; }
+    </style>
+</head>
+<body>
+    <button class="print-button no-print" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+    
+    <div class="page">
+        <div class="header">
+            <div class="company-name">CAPACITACIONES ABC CEC SPA</div>
+            <div class="doc-info">
+                <strong>Documento N° 6</strong><br>
+                Versión: 1.0<br>
+                Noviembre 2025
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin: 50px 0;">
+            <div style="font-size: 32px; font-weight: bold; color: #4f46e5; margin-bottom: 15px;">
+                SISTEMA DE VERIFICACIÓN<br>LEY 21.634
+            </div>
+            <div style="font-size: 18px; color: #666;">Transparencia y Prevención de Conflictos de Interés</div>
+        </div>
+        
+        <div class="critical-box">
+            <strong style="font-size: 16px;">⚖️ CUMPLIMIENTO LEGAL OBLIGATORIO</strong><br><br>
+            La Ley 21.634 establece la obligación de verificar y transparentar vínculos que puedan generar 
+            conflictos de interés en contrataciones públicas.<br><br>
+            <strong>Sanciones por incumplimiento:</strong><br>
+            • Multas de hasta 1.000 UTM (aprox. $65.000.000)<br>
+            • Inhabilitación para contratar con el Estado<br>
+            • Nulidad de contratos suscritos<br>
+            • Responsabilidad civil y penal de representantes
+        </div>
+        
+        <div class="title">1. MARCO LEGAL Y OBJETIVOS</div>
+        
+        <div class="section-title">1.1 Fundamento Legal</div>
+        
+        <div class="content">
+            La <strong>Ley 21.634</strong>, publicada en el Diario Oficial el <span class="editable">[fecha publicación]</span>, 
+            modifica diversos cuerpos legales para establecer la obligación de transparentar vínculos entre quienes 
+            participan en contrataciones públicas y funcionarios públicos, con el objetivo de prevenir y gestionar 
+            conflictos de interés.
+        </div>
+        
+        <div class="highlight-box">
+            <strong>Ámbito de Aplicación:</strong><br>
+            • Todas las empresas que contraten o liciten con órganos del Estado<br>
+            • Proveedores de bienes, servicios y obras públicas<br>
+            • Entidades que reciban aportes o subvenciones fiscales<br>
+            • Consultores y asesores del sector público
+        </div>
+        
+        <div class="section-title">1.2 Objetivos del Sistema</div>
+        
+        <ul class="bullet-list">
+            <li><strong>Prevenir conflictos de interés</strong> que puedan comprometer la imparcialidad en contrataciones públicas</li>
+            <li><strong>Garantizar transparencia</strong> en las relaciones entre empresa, personal y funcionarios públicos</li>
+            <li><strong>Cumplir obligaciones legales</strong> establecidas por la Ley 21.634 y normativa complementaria</li>
+            <li><strong>Proteger la reputación institucional</strong> mediante prácticas éticas verificables</li>
+            <li><strong>Maximizar posibilidades de adjudicación</strong> en licitaciones públicas mediante compliance demostrable</li>
+        </div>
+        
+        <div class="title">2. ALCANCE DEL SISTEMA</div>
+        
+        <div class="content">
+            El sistema de verificación aplica obligatoriamente a:
+        </div>
+        
+        <table class="table">
+            <tr>
+                <th style="width: 35%;">Categoría de Personal</th>
+                <th>Alcance de Verificación</th>
+            </tr>
+            <tr>
+                <td><strong>Directores y Socios</strong></td>
+                <td>Verificación completa: vínculos familiares, societarios y laborales</td>
+            </tr>
+            <tr>
+                <td><strong>Gerentes y Alta Dirección</strong></td>
+                <td>Verificación completa con actualización semestral obligatoria</td>
+            </tr>
+            <tr>
+                <td><strong>Representantes Legales</strong></td>
+                <td>Verificación exhaustiva antes de cada licitación relevante</td>
+            </tr>
+            <tr>
+                <td><strong>Jefes de Licitaciones</strong></td>
+                <td>Verificación específica por cada proceso en que participen</td>
+            </tr>
+            <tr>
+                <td><strong>Personal Clave</strong></td>
+                <td>Verificación según rol en proyectos públicos</td>
+            </tr>
+            <tr>
+                <td><strong>Asesores Externos</strong></td>
+                <td>Declaración jurada previa a contratación</td>
+            </tr>
+        </table>
+        
+        <div class="title">3. TIPOS DE VÍNCULOS VERIFICADOS</div>
+        
+        <div class="section-title">3.1 VÍNCULOS FAMILIARES</div>
+        
+        <div class="content">
+            Se verifican relaciones familiares hasta los siguientes grados:
+        </div>
+        
+        <div class="highlight-box">
+            <strong>A) PARENTESCO POR CONSANGUINIDAD (hasta 3° grado):</strong><br><br>
+            
+            <strong>1° GRADO:</strong><br>
+            • Padre / Madre<br>
+            • Hijos / Hijas<br><br>
+            
+            <strong>2° GRADO:</strong><br>
+            • Hermanos / Hermanas<br>
+            • Abuelos / Abuelas<br>
+            • Nietos / Nietas<br><br>
+            
+            <strong>3° GRADO:</strong><br>
+            • Tíos / Tías<br>
+            • Sobrinos / Sobrinas<br>
+            • Bisabuelos / Bisabuelas<br>
+            • Bisnietos / Bisnietas
+        </div>
+        
+        <div class="highlight-box">
+            <strong>B) PARENTESCO POR AFINIDAD (hasta 2° grado):</strong><br><br>
+            
+            <strong>1° GRADO:</strong><br>
+            • Suegro / Suegra<br>
+            • Yerno / Nuera<br>
+            • Padrastro / Madrastra<br>
+            • Hijastro / Hijastra<br><br>
+            
+            <strong>2° GRADO:</strong><br>
+            • Cuñados / Cuñadas<br>
+            • Abuelos del cónyuge<br>
+            • Nietos del cónyuge
+        </div>
+        
+        <div class="highlight-box">
+            <strong>C) OTRAS RELACIONES FAMILIARES:</strong><br><br>
+            • Cónyuge (matrimonio vigente)<br>
+            • Conviviente civil (AUC registrado)<br>
+            • Conviviente de hecho (declarado)
+        </div>
+        
+        <div class="section-title">3.2 VÍNCULOS SOCIETARIOS</div>
+        
+        <div class="content">
+            Se verifica participación en sociedades y relaciones de control:
+        </div>
+        
+        <ul class="bullet-list">
+            <li><strong>Participación directa:</strong> Propiedad de acciones o derechos sociales superiores al 10% del capital</li>
+            <li><strong>Participación indirecta:</strong> Participación a través de otras sociedades controladas</li>
+            <li><strong>Directorios:</strong> Miembro de directorio, director suplente o director temporal</li>
+            <li><strong>Gerencias:</strong> Gerente general, gerentes de área con poder de decisión</li>
+            <li><strong>Administración:</strong> Administrador único, administrador solidario o mancomunado</li>
+            <li><strong>Control de facto:</strong> Relación de influencia significativa aunque no haya participación formal</li>
+            <li><strong>Beneficiario final:</strong> Persona natural que en última instancia controla la entidad</li>
+        </ul>
+        
+        <div class="section-title">3.3 VÍNCULOS LABORALES</div>
+        
+        <div class="content">
+            Se verifican relaciones laborales actuales y recientes:
+        </div>
+        
+        <table class="table">
+            <tr>
+                <th>Tipo de Vínculo</th>
+                <th>Período Verificación</th>
+                <th>Detalle</th>
+            </tr>
+            <tr>
+                <td><strong>Empleo actual</strong></td>
+                <td>Presente</td>
+                <td>Trabajo en organismos públicos del sector</td>
+            </tr>
+            <tr>
+                <td><strong>Empleos anteriores</strong></td>
+                <td>Últimos 2 años</td>
+                <td>Cargos en entidades públicas relacionadas</td>
+            </tr>
+            <tr>
+                <td><strong>Asesorías</strong></td>
+                <td>Últimos 2 años</td>
+                <td>Consultorías, asesorías técnicas o jurídicas</td>
+            </tr>
+            <tr>
+                <td><strong>Honorarios</strong></td>
+                <td>Últimos 2 años</td>
+                <td>Servicios profesionales a honorarios</td>
+            </tr>
+            <tr>
+                <td><strong>Docencia</strong></td>
+                <td>Actual</td>
+                <td>Cátedras o capacitaciones en instituciones públicas</td>
+            </tr>
+        </table>
+    </div>
+    
+    <div class="page page-break">
+        <div class="header">
+            <div class="company-name">CAPACITACIONES ABC CEC SPA</div>
+            <div class="doc-info">Página 2 de 5</div>
+        </div>
+        
+        <div class="title">4. FUENTES DE INFORMACIÓN</div>
+        
+        <div class="section-title">4.1 Fuentes Primarias (Declarativas)</div>
+        
+        <div class="content">
+            Información proporcionada directamente por el colaborador:
+        </div>
+        
+        <ul class="bullet-list">
+            <li><strong>Declaración Jurada:</strong> Formulario oficial completado al ingreso</li>
+            <li><strong>Actualizaciones semestrales:</strong> Revisión obligatoria cada 6 meses</li>
+            <li><strong>Declaraciones ad-hoc:</strong> Previo a participación en licitaciones específicas</li>
+            <li><strong>Curriculum vitae:</strong> Trayectoria laboral y académica</li>
+        </ul>
+        
+        <div class="section-title">4.2 Fuentes Secundarias (Verificación)</div>
+        
+        <div class="content">
+            Registros públicos consultados para verificación cruzada:
+        </div>
+        
+        <table class="table">
+            <tr>
+                <th style="width: 40%;">Fuente de Información</th>
+                <th>Datos Verificados</th>
+            </tr>
+            <tr>
+                <td><strong>Registro Civil</strong></td>
+                <td>Estado civil, filiaciones, vínculos familiares</td>
+            </tr>
+            <tr>
+                <td><strong>Servicio Electoral (SERVEL)</strong></td>
+                <td>Cambio de domicilio, actualizaciones de estado civil</td>
+            </tr>
+            <tr>
+                <td><strong>Diario Oficial</strong></td>
+                <td>Nombramientos públicos, decretos, resoluciones</td>
+            </tr>
+            <tr>
+                <td><strong>Conservador de Bienes Raíces</strong></td>
+                <td>Inscripciones de sociedades, modificaciones, poderes</td>
+            </tr>
+            <tr>
+                <td><strong>Portal Mercado Público</strong></td>
+                <td>Adjudicaciones previas, proveedores, contratos</td>
+            </tr>
+            <tr>
+                <td><strong>Superintendencia de Valores y Seguros</strong></td>
+                <td>Directorios, propiedad accionaria, información financiera</td>
+            </tr>
+            <tr>
+                <td><strong>Superintendencia de Insolvencia</strong></td>
+                <td>Quiebras, liquidaciones, concursos</td>
+            </tr>
+            <tr>
+                <td><strong>Portal de Transparencia</strong></td>
+                <td>Personal de servicios públicos, remuneraciones, contratos</td>
+            </tr>
+            <tr>
+                <td><strong>Registro de Empresas y Sociedades</strong></td>
+                <td>Constitución, modificaciones, socios, representantes</td>
+            </tr>
+        </table>
+        
+        <div class="section-title">4.3 Fuentes Complementarias</div>
+        
+        <ul class="bullet-list">
+            <li>LinkedIn y redes profesionales (información pública)</li>
+            <li>Registro de prensa (hemerotecas digitales)</li>
+            <li>Informes comerciales (DICOM, riesgo crediticio)</li>
+            <li>Bases de datos de sanciones (Contraloría, tribunales)</li>
+        </ul>
+        
+        <div class="title">5. PROCESO DE VERIFICACIÓN</div>
+        
+        <div class="flowchart">
+            <div style="text-align: center; font-weight: bold; font-size: 14px; color: #4f46e5; margin-bottom: 15px;">
+                FLUJO DEL PROCESO DE VERIFICACIÓN
+            </div>
+            
+            <div class="flow-step">
+                <strong>ETAPA 1: RECOPILACIÓN DE INFORMACIÓN</strong><br>
+                • Colaborador completa Declaración Jurada oficial<br>
+                • Proporciona RUT y datos de familiares directos<br>
+                • Declara participaciones societarias<br>
+                • Informa empleos anteriores relevantes<br>
+                <strong>Responsable:</strong> Colaborador + RRHH<br>
+                <strong>Plazo:</strong> Al ingreso y actualización semestral
+            </div>
+            
+            <div class="flow-arrow">▼</div>
+            
+            <div class="flow-step">
+                <strong>ETAPA 2: VERIFICACIÓN AUTOMATIZADA</strong><br>
+                • Sistema cruza declaración con bases de datos públicas<br>
+                • Algoritmos detectan coincidencias de nombres, RUTs y relaciones<br>
+                • Identificación preliminar de potenciales vínculos<br>
+                • Generación de alertas automáticas<br>
+                <strong>Responsable:</strong> Sistema tecnológico<br>
+                <strong>Plazo:</strong> 24-48 horas
+            </div>
+            
+            <div class="flow-arrow">▼</div>
+            
+            <div class="flow-step">
+                <strong>ETAPA 3: ANÁLISIS MANUAL</strong><br>
+                • Oficial de Cumplimiento revisa alertas generadas<br>
+                • Evalúa relevancia y criticidad de vínculos detectados<br>
+                • Clasifica riesgos: bajo, medio, alto<br>
+                • Determina si existe conflicto de interés real<br>
+                • Solicita aclaraciones al colaborador si es necesario<br>
+                <strong>Responsable:</strong> Oficial de Cumplimiento<br>
+                <strong>Plazo:</strong> 3-5 días hábiles
+            </div>
+            
+            <div class="flow-arrow">▼</div>
+            
+            <div class="flow-step">
+                <strong>ETAPA 4: DECISIÓN Y GESTIÓN</strong><br>
+                • Comité de Ética evalúa casos de riesgo medio/alto<br>
+                • Decide: aprobación, restricciones o rechazo<br>
+                • Define medidas de mitigación si corresponde<br>
+                • Comunica decisión al colaborador<br>
+                • Registra en expediente de compliance<br>
+                <strong>Responsable:</strong> Comité de Ética<br>
+                <strong>Plazo:</strong> 5-7 días hábiles
+            </div>
+            
+            <div class="flow-arrow">▼</div>
+            
+            <div class="flow-step">
+                <strong>ETAPA 5: MONITOREO CONTINUO</strong><br>
+                • Actualización semestral obligatoria de declaraciones<br>
+                • Alertas automáticas ante cambios en registros públicos<br>
+                • Re-verificación previo a licitaciones importantes<br>
+                • Auditorías aleatorias trimestrales<br>
+                <strong>Responsable:</strong> Sistema + Oficial Cumplimiento<br>
+                <strong>Plazo:</strong> Permanente
+            </div>
+        </div>
+    </div>
+    
+    <div class="page page-break">
+        <div class="header">
+            <div class="company-name">CAPACITACIONES ABC CEC SPA</div>
+            <div class="doc-info">Página 3 de 5</div>
+        </div>
+        
+        <div class="title">6. MATRIZ DE EVALUACIÓN DE RIESGOS</div>
+        
+        <div class="content">
+            Cada vínculo detectado se evalúa según impacto y probabilidad de conflicto:
+        </div>
+        
+        <table class="matrix">
+            <tr>
+                <th rowspan="2" style="width: 20%;">PROBABILIDAD<br>DE CONFLICTO</th>
+                <th colspan="3">IMPACTO DEL CONFLICTO</th>
+            </tr>
+            <tr>
+                <th style="width: 26%;">BAJO<br>(Rol menor)</th>
+                <th style="width: 27%;">MEDIO<br>(Rol relevante)</th>
+                <th style="width: 27%;">ALTO<br>(Decisor clave)</th>
+            </tr>
+            <tr>
+                <td style="background: #f9fafb; font-weight: bold;">ALTA<br>(Familiar directo)</td>
+                <td class="risk-medium">RIESGO<br>MEDIO</td>
+                <td class="risk-high">RIESGO<br>ALTO</td>
+                <td class="risk-high">RIESGO<br>CRÍTICO</td>
+            </tr>
+            <tr>
+                <td style="background: #f9fafb; font-weight: bold;">MEDIA<br>(Familiar indirecto)</td>
+                <td class="risk-low">RIESGO<br>BAJO</td>
+                <td class="risk-medium">RIESGO<br>MEDIO</td>
+                <td class="risk-high">RIESGO<br>ALTO</td>
+            </tr>
+            <tr>
+                <td style="background: #f9fafb; font-weight: bold;">BAJA<br>(Vínculo lejano)</td>
+                <td class="risk-low">RIESGO<br>MÍNIMO</td>
+                <td class="risk-low">RIESGO<br>BAJO</td>
+                <td class="risk-medium">RIESGO<br>MEDIO</td>
+            </tr>
+        </table>
+        
+        <div class="section-title">6.1 Criterios de Clasificación</div>
+        
+        <div class="subsection-title">PROBABILIDAD DE CONFLICTO:</div>
+        <ul class="bullet-list">
+            <li><strong>ALTA:</strong> Cónyuge, hijos, padres, hermanos (1° y 2° consanguinidad)</li>
+            <li><strong>MEDIA:</strong> Tíos, sobrinos, abuelos, cuñados (3° consanguinidad, 2° afinidad)</li>
+            <li><strong>BAJA:</strong> Vínculos societarios o laborales lejanos en el tiempo</li>
+        </ul>
+        
+        <div class="subsection-title">IMPACTO DEL CONFLICTO:</div>
+        <ul class="bullet-list">
+            <li><strong>ALTO:</strong> Funcionario evaluador, jefe de compras, decisor de licitación</li>
+            <li><strong>MEDIO:</strong> Personal técnico con influencia, asesores de autoridad</li>
+            <li><strong>BAJO:</strong> Personal administrativo sin poder de decisión</li>
+        </ul>
+        
+        <div class="section-title">6.2 Medidas según Nivel de Riesgo</div>
+        
+        <table class="table">
+            <tr>
+                <th>Nivel Riesgo</th>
+                <th>Medidas de Gestión</th>
+            </tr>
+            <tr>
+                <td><strong class="risk-low">RIESGO BAJO/MÍNIMO</strong></td>
+                <td>
+                    • Registro en expediente<br>
+                    • Monitoreo estándar<br>
+                    • Sin restricciones operativas
+                </td>
+            </tr>
+            <tr>
+                <td><strong class="risk-medium">RIESGO MEDIO</strong></td>
+                <td>
+                    • Declaración específica por licitación<br>
+                    • Abstención en evaluaciones directas<br>
+                    • Supervisión reforzada<br>
+                    • Revisión por superior jerárquico
+                </td>
+            </tr>
+            <tr>
+                <td><strong class="risk-high">RIESGO ALTO/CRÍTICO</strong></td>
+                <td>
+                    • Prohibición de participar en la licitación específica<br>
+                    • Reasignación de funciones temporales<br>
+                    • Evaluación por Comité de Ética<br>
+                    • Registro especial con seguimiento mensual<br>
+                    • Posible exclusión de proyecto completo
+                </td>
+            </tr>
+        </table>
+        
+        <div class="title">7. HERRAMIENTAS TECNOLÓGICAS</div>
+        
+        <div class="section-title">7.1 Sistema de Gestión</div>
+        
+        <div class="content">
+            CAPACITACIONES ABC CEC SPA utiliza <span class="editable">[especificar software/sistema]</span> 
+            para automatizar la verificación:
+        </div>
+        
+        <div class="highlight-box">
+            <strong>FUNCIONALIDADES DEL SISTEMA:</strong><br><br>
+            ✓ <strong>Registro centralizado:</strong> Base de datos única de declaraciones<br>
+            ✓ <strong>Cruce automatizado:</strong> Comparación con registros públicos en línea<br>
+            ✓ <strong>Alertas inteligentes:</strong> Notificaciones ante vínculos detectados<br>
+            ✓ <strong>Trazabilidad completa:</strong> Histórico de verificaciones y decisiones<br>
+            ✓ <strong>Reportería:</strong> Informes automáticos para Directorio y auditorías<br>
+            ✓ <strong>Calendario de actualizaciones:</strong> Recordatorios automáticos s
